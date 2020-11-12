@@ -1,5 +1,6 @@
 import pygame
 from settings import *
+from sprites import *
 # Импортируем значения параметров
 
 
@@ -13,26 +14,49 @@ class Game():
         pygame.mixer.init()
 
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
-        pygame.display.set_caption("Hangar 18")
+        pygame.display.set_caption(TITLE)
         self.clock = pygame.time.Clock()
         self.running = True
 
-    def new(self):
+    def new_game(self):
         """Функция новой игры"""
+        # Создаём гурппу спрайтов
         self.all_sprites = pygame.sprite.Group()
-        self.run()  # Запускаем функию run() для группирования игры
+        # Создаём отдельную группу спрайтов для платформ
+        self.platforms = pygame.sprite.Group()
+        # Спаун игрока
+        self.player = Player()
+        # Добавление спрайта игрока в группу спрайтов
+        self.all_sprites.add(self.player)
+        # Спаун платформы с перечисление нужных аргументов
+        p1 = Platform(0, HEIGHT - 48, WIDTH, 50)
+        # Добавление платформы в группы спрайтов
+        self.all_sprites.add(p1)
+        self.platforms.add(p1)
+        # Запускаем функию run() для группирования игры
+        p2 = Platform(WIDTH//2, HEIGHT//2 + 100, 50, 10)
+        self.all_sprites.add(p2)
+        self.platforms.add(p2)
+        self.run_game()
 
-    def run(self):
+    def run_game(self):
         """Функция содержит основной цикл игры"""
         self.playing = True
         while self.playing:
             self.clock.tick(FPS)
-            self.events()       # Запуск событий
-            self.update()       # Запуск обновлений
-            self.draw()         # Запуск отрисовки
+            # Запуск событий
+            self.events()
+            # Запуск обновлений
+            self.update_screen()
+            # Запуск отрисовки
+            self.draw()
 
-    def update(self):
+    def update_screen(self):
         self.all_sprites.update()
+        hits = pygame.sprite.spritecollide(self.player, self.platforms, False)
+        if hits:
+            self.player.pos.y = hits[0].rect.top
+            self.player.vel.y = 0
 
     def events(self):
         """ Функция основных событий игры"""
@@ -44,7 +68,7 @@ class Game():
 
     def draw (self):
         """Функия отрисовки"""
-        self.screen.fill(BLACK)
+        self.screen.fill(WHITE)
         self.all_sprites.draw(self.screen)
 
         pygame.display.flip()
@@ -53,13 +77,15 @@ class Game():
         """Окно запуска игры"""
         pass
 
-    def GO_screen(self):
+    def game_over_screen(self):
         """Окно Game Over"""
         pass
+
+
 g = Game()
 g.start_screen()
 
 while g.running:
-    g.new()
-    g.GO_screen()
+    g.new_game()
+    g.game_over_screen()
 pygame.quit()
