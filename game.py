@@ -25,7 +25,7 @@ class Game():
         # Создаём отдельную группу спрайтов для платформ
         self.platforms = pygame.sprite.Group()
         # Спаун игрока
-        self.player = Player()
+        self.player = Player(self)#Player знает о существовании переменных в game
         # Добавление спрайта игрока в группу спрайтов
         self.all_sprites.add(self.player)
         # Спаун платформы с перечисление нужных аргументов
@@ -65,6 +65,9 @@ class Game():
                 if self.playing:
                     self.playing = False
                 self.running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    self.player.jump()
 
     def draw (self):
         """Функия отрисовки"""

@@ -8,7 +8,7 @@ vector2 = pygame.math.Vector2
 
 class Player(pygame.sprite.Sprite):
     """Объект игрока"""
-    def __init__(self):
+    def __init__(self,game):
 
         pygame.sprite.Sprite.__init__(self)
         # Переменная ходьбы
@@ -22,6 +22,7 @@ class Player(pygame.sprite.Sprite):
         # Загружаем изображение персонажа через функцию
         self.load_images()
         self.image = self.standing
+        self.game = game
         # Получаем область персонажа
         self.rect = self.image.get_rect()
         # Удаляем фон, отсавляя только модель персонажа
@@ -57,10 +58,18 @@ class Player(pygame.sprite.Sprite):
         for frame in self.walk_right_frames:
             self.walk_left_frames.append(pygame.transform.flip(frame, True, False))
 
+    def jump(self):
+        #Прыгаем только если стоим на поверхности
+        self.rect.x += 1
+        hits = pygame.sprite.spritecollide(self, self.game.platforms, False)
+        self.rect.x -= 1
+        if hits:
+            self.vel.y = -25
+
     def update(self):
         """Функция передвижения игрока в пространстве"""
         self.animate()
-        self.ac = vector2(0, 1.15)
+        self.ac = vector2(0, player_grav)
         # Считывание всех нажатых клавиш
         self.keys = pygame.key.get_pressed()
 
@@ -70,7 +79,7 @@ class Player(pygame.sprite.Sprite):
             self.ac.x = player_ac
 
         # Учёт силы трения (для того, чтобы игрок не скользил)
-        self.ac += self.vel * player_friction
+        self.ac.x += self.vel.x * player_friction
         # Расчёт передвижения игрока
         self.vel += self.ac
         # Условие для остановки анимации
