@@ -25,7 +25,7 @@ class Game():
         # Создаём отдельную группу спрайтов для платформ
         self.platforms = pygame.sprite.Group()
         # Спаун игрока
-        self.player = Player(self)#Player знает о существовании переменных в game
+        self.player = Player(self)
         # Добавление спрайта игрока в группу спрайтов
         self.all_sprites.add(self.player)
         # Спаун платформы с перечисление нужных аргументов
@@ -66,7 +66,7 @@ class Game():
                     self.playing = False
                 self.running = False
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
+                if event.key == pygame.K_w or event.key == pygame.K_UP:
                     self.player.jump()
 
     def draw (self):

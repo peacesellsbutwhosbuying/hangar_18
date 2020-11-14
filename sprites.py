@@ -59,12 +59,12 @@ class Player(pygame.sprite.Sprite):
             self.walk_left_frames.append(pygame.transform.flip(frame, True, False))
 
     def jump(self):
-        #Прыгаем только если стоим на поверхности
+        # Прыгаем только если стоим на поверхности
         self.rect.x += 1
         hits = pygame.sprite.spritecollide(self, self.game.platforms, False)
         self.rect.x -= 1
         if hits:
-            self.vel.y = -25
+            self.vel.y = -20
 
     def update(self):
         """Функция передвижения игрока в пространстве"""
