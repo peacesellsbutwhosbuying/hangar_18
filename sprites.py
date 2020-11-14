@@ -8,9 +8,10 @@ vector2 = pygame.math.Vector2
 
 class Player(pygame.sprite.Sprite):
     """Объект игрока"""
-    def __init__(self):
+    def __init__(self,game):
 
         pygame.sprite.Sprite.__init__(self)
+        self.game = game
         # Загружаем изображение персонажа
         self.image = pygame.image.load(r'Vic_front.png').convert_alpha()
         # Получаем область персонажа
@@ -26,9 +27,17 @@ class Player(pygame.sprite.Sprite):
         # Ускорение игрока
         self.ac = vector2(0, 0)
 
+    def jump(self):
+        #Прыгаем только если стоим на поверхности
+        self.rect.x += 1
+        hits = pygame.sprite.spritecollide(self, self.game.platforms, False)
+        self.rect.x -= 1
+        if hits:
+            self.vel.y = -25
+
     def update(self):
         """Функция передвижения игрока в пространстве"""
-        self.ac = vector2(0, 1.15)
+        self.ac = vector2(0, player_grav)
         # Считывание всех нажатых клавиш
         self.keys = pygame.key.get_pressed()
 
@@ -38,7 +47,7 @@ class Player(pygame.sprite.Sprite):
             self.ac.x = player_ac
 
         # Учёт силы трения (для того, чтобы игрок не скользил)
-        self.ac += self.vel * player_friction
+        self.ac.x += self.vel.x * player_friction
         # Расчёт передвижения игрока
         self.vel += self.ac
         self.pos += self.vel + 0.5 * self.ac
