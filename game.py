@@ -72,7 +72,7 @@ class Game():
                     self.player.jump()
 
                 if event.key == pygame.K_SPACE:
-                    self.bullet = Bullet(self.player.rect.x, self.player.rect.y)
+                    self.bullet = Bullet(self.player.rect.centerx, self.player.rect.centery)
                     self.all_sprites.add(self.bullet)
                     self.bullets.add(self.bullet)
 

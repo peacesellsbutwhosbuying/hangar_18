@@ -149,13 +149,23 @@ class Bullet(pygame.sprite.Sprite):
 
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((20, 10))
+        self.image = pygame.Surface((20, 5))
         self.image.fill(GREEN)
         self.rect = self.image.get_rect()
         self.rect.bottom = y
         self.rect.centerx = x
-        self.vel = 8
+        self.facing = 1
+        self.keys = pygame.key.get_pressed()
 
+        if self.keys[pygame.K_d]:
+            self.facing = 1
+        if self.keys[pygame.K_RIGHT]:
+            self.facing = 1
+        if self.keys[pygame.K_a]:
+            self.facing = -1
+        if self.keys[pygame.K_LEFT]:
+            self.facing = -1
+        self.vel = 8 * self.facing
     def update(self):
         self.rect.x += self.vel
 
