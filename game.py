@@ -28,10 +28,11 @@ class Game():
         self.player = Player(self)
         # Добавление спрайта игрока в группу спрайтов
         self.all_sprites.add(self.player)
+        self.bullets = pygame.sprite.Group()
         # Спаун платформы с перечисление нужных аргументов
         p1 = Platform(0, HEIGHT - 48, WIDTH, 50)
         # Добавление платформы в группы спрайтов
-        self.all_sprites.add(p1)
+        self.all_sprites.add(p1, )
         self.platforms.add(p1)
         # Запускаем функию run() для группирования игры
         p2 = Platform(WIDTH//2, HEIGHT//2 + 100, 50, 10)
@@ -58,6 +59,7 @@ class Game():
             self.player.pos.y = hits[0].rect.top
             self.player.vel.y = 0
 
+
     def events(self):
         """ Функция основных событий игры"""
         for event in pygame.event.get():
@@ -68,6 +70,12 @@ class Game():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_w or event.key == pygame.K_UP:
                     self.player.jump()
+
+                if event.key == pygame.K_SPACE:
+                    self.bullet = Bullet(self.player.rect.x, self.player.rect.y)
+                    self.all_sprites.add(self.bullet)
+                    self.bullets.add(self.bullet)
+
 
     def draw (self):
         """Функия отрисовки"""

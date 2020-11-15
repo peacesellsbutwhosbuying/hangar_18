@@ -6,6 +6,9 @@ from settings import *
 vector2 = pygame.math.Vector2
 
 
+
+
+
 class Player(pygame.sprite.Sprite):
     """Объект игрока"""
     def __init__(self,game):
@@ -65,6 +68,18 @@ class Player(pygame.sprite.Sprite):
         self.rect.x -= 1
         if hits:
             self.vel.y = -20
+
+    def shoot(self):
+
+        bullet = Bullet(self.rect.centerx, self.rect.top)
+
+
+
+
+
+
+
+
 
     def update(self):
         """Функция передвижения игрока в пространстве"""
@@ -128,6 +143,22 @@ class Platform(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+
+
+class Bullet(pygame.sprite.Sprite):
+
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((20, 10))
+        self.image.fill(GREEN)
+        self.rect = self.image.get_rect()
+        self.rect.bottom = y
+        self.rect.centerx = x
+        self.vel = 8
+
+    def update(self):
+        self.rect.x += self.vel
+
 
 
 
