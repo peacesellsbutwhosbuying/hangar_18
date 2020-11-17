@@ -29,16 +29,14 @@ class Game():
         # Добавление спрайта игрока в группу спрайтов
         self.all_sprites.add(self.player)
         self.bullets = pygame.sprite.Group()
-        # Спаун платформы с перечисление нужных аргументов
-        p1 = Platform(0, HEIGHT - 48, WIDTH, 50)
-        # Добавление платформы в группы спрайтов
+        # Спаун платформы с перечисление нужных аргументов из списка
+        for plat in platform_list:
+            p = Platform(*plat)
+            # Добавление платформы в группы спрайтов
+            self.all_sprites.add(p)
+            self.platforms.add(p)
 
         # Запускаем функию run() для группирования игры
-        p2 = Platform(WIDTH//2, HEIGHT//2 + 100, 50, 10)
-        p3 = Platform(WIDTH//2, HEIGHT//4 + 100, 50, 10)
-
-        self.all_sprites.add(p1, p2, p3)
-        self.platforms.add(p1, p2, p3)
         self.run_game()
 
     def run_game(self):
@@ -61,7 +59,7 @@ class Game():
             self.player.vel.y = 0
         """ПРОКРУТКА ЭКРАНА"""
         # Если игрок доходит до экрана по горизонтали, то экран прокручивается
-        if self.player.rect.centerx <= WIDTH // 4:
+        if self.player.rect.centerx <= WIDTH//4:
             self.player.pos.x += abs(self.player.vel.x)
             for plat in self.platforms:
                 plat.rect.x += abs(self.player.vel.x)
