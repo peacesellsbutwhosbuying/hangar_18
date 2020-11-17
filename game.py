@@ -32,12 +32,13 @@ class Game():
         # Спаун платформы с перечисление нужных аргументов
         p1 = Platform(0, HEIGHT - 48, WIDTH, 50)
         # Добавление платформы в группы спрайтов
-        self.all_sprites.add(p1, )
-        self.platforms.add(p1)
+
         # Запускаем функию run() для группирования игры
         p2 = Platform(WIDTH//2, HEIGHT//2 + 100, 50, 10)
-        self.all_sprites.add(p2)
-        self.platforms.add(p2)
+        p3 = Platform(WIDTH//2, HEIGHT//4 + 100, 50, 10)
+
+        self.all_sprites.add(p1, p2, p3)
+        self.platforms.add(p1, p2, p3)
         self.run_game()
 
     def run_game(self):
@@ -58,7 +59,24 @@ class Game():
         if hits:
             self.player.pos.y = hits[0].rect.top
             self.player.vel.y = 0
-
+        """ПРОКРУТКА ЭКРАНА"""
+        # Если игрок доходит до экрана по горизонтали, то экран прокручивается
+        if self.player.rect.centerx <= WIDTH // 4:
+            self.player.pos.x += abs(self.player.vel.x)
+            for plat in self.platforms:
+                plat.rect.x += abs(self.player.vel.x)
+        if self.player.rect.centerx >= 0.75 * WIDTH:
+            self.player.pos.x -= abs(self.player.vel.x)
+            for plat in self.platforms:
+                plat.rect.x -= abs(self.player.vel.x)
+        if self.player.rect.centery <= HEIGHT//4:
+            self.player.pos.y += abs(self.player.vel.y)
+            for plat in self.platforms:
+                plat.rect.y += abs(self.player.vel.y)
+        if self.player.rect.top >= 0.75 * HEIGHT + 30:
+            self.player.pos.y -= abs(self.player.vel.y)
+            for plat in self.platforms:
+                plat.rect.y -= abs(self.player.vel.y)
 
     def events(self):
         """ Функция основных событий игры"""

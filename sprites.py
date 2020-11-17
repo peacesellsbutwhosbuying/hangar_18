@@ -69,18 +69,6 @@ class Player(pygame.sprite.Sprite):
         if hits:
             self.vel.y = -20
 
-    def shoot(self):
-
-        bullet = Bullet(self.rect.centerx, self.rect.top)
-
-
-
-
-
-
-
-
-
     def update(self):
         """Функция передвижения игрока в пространстве"""
         self.animate()
