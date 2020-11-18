@@ -34,7 +34,7 @@ class Game():
         p2 = Platform(WIDTH//2, HEIGHT//2 + 100, 50, 10)
         p3 = Platform(WIDTH//2, HEIGHT//4 + 100, 50, 10)
         mob1 = Mob(100, 100, 100)
-        self.all_sprites.add(p1, p2, p3, mob1)
+        self.all_sprites.add(p1, p2, p3)
         self.platforms.add(p1, p2, p3)
         # Добавление спрайта игрока в группу спрайтов
         self.all_sprites.add(self.player)

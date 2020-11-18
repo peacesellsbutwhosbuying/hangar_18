@@ -159,16 +159,7 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.x += self.vel
 
 
-class Mob(pygame.sprite.Sprite):
-    def __init__(self, x, y, rang):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((50, 50))
-        self.image.fill(BLUE)
-        self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
-        self.vel = 5
-        self.range = rang
+
 
 
 
