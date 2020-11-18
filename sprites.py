@@ -4,14 +4,14 @@ import pygame
 from settings import *
 # Переобозначаем вектор(двумерный) для удобства использования
 vector2 = pygame.math.Vector2
-
+from random import *
 
 
 
 
 class Player(pygame.sprite.Sprite):
     """Объект игрока"""
-    def __init__(self,game):
+    def __init__(self, game):
 
         pygame.sprite.Sprite.__init__(self)
         # Переменная ходьбы
@@ -41,14 +41,14 @@ class Player(pygame.sprite.Sprite):
     def load_images(self):
         """Функция загрузки изображений персонажа"""
         # Изображения когда персонаж стоит
-        self.standing = pygame.image.load('Vic_front.png')
+        self.standing = pygame.image.load('source/Vic_front.png')
         # Удаление фона изображения
         self.standing.set_colorkey(back_gr)
         # Изображения, если игрок идёт вправо
-        self.walk_right_frames = [pygame.image.load('Right_1.png'),
-                                 pygame.image.load('Right_2.png'),
-                                 pygame.image.load('Right_3.png'),
-                                 pygame.image.load('Right_4.png')]
+        self.walk_right_frames = [pygame.image.load('source/Right_1.png'),
+                                 pygame.image.load('source/Right_2.png'),
+                                 pygame.image.load('source/Right_3.png'),
+                                 pygame.image.load('source/Right_4.png')]
         # Удаление фона для анимации передвижения вправо
         for frame in self.walk_right_frames:
             frame.set_colorkey(back_gr)
@@ -67,6 +67,7 @@ class Player(pygame.sprite.Sprite):
         hits = pygame.sprite.spritecollide(self, self.game.platforms, False)
         self.rect.x -= 1
         if hits:
+
             self.vel.y = -20
 
     def update(self):
@@ -156,6 +157,24 @@ class Bullet(pygame.sprite.Sprite):
         self.vel = 8 * self.facing
     def update(self):
         self.rect.x += self.vel
+
+
+class Mob(pygame.sprite.Sprite):
+    def __init__(self, x, y, rang):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((50, 50))
+        self.image.fill(BLUE)
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.vel = 5
+        self.range = rang
+
+
+
+
+
+
 
 
 

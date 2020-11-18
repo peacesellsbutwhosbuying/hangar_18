@@ -17,6 +17,8 @@ class Game():
         pygame.display.set_caption(TITLE)
         self.clock = pygame.time.Clock()
         self.running = True
+        pygame.mixer.music.load('source/bgmusic.wav')
+        # pygame.mixer.music.play(-1)
 
     def new_game(self):
         """Функция новой игры"""
@@ -26,19 +28,16 @@ class Game():
         self.platforms = pygame.sprite.Group()
         # Спаун игрока
         self.player = Player(self)
-        # Добавление спрайта игрока в группу спрайтов
-        self.all_sprites.add(self.player)
         self.bullets = pygame.sprite.Group()
         # Спаун платформы с перечисление нужных аргументов
         p1 = Platform(0, HEIGHT - 48, WIDTH, 50)
-        # Добавление платформы в группы спрайтов
-
-        # Запускаем функию run() для группирования игры
         p2 = Platform(WIDTH//2, HEIGHT//2 + 100, 50, 10)
         p3 = Platform(WIDTH//2, HEIGHT//4 + 100, 50, 10)
-
-        self.all_sprites.add(p1, p2, p3)
+        mob1 = Mob(100, 100, 100)
+        self.all_sprites.add(p1, p2, p3, mob1)
         self.platforms.add(p1, p2, p3)
+        # Добавление спрайта игрока в группу спрайтов
+        self.all_sprites.add(self.player)
         self.run_game()
 
     def run_game(self):
@@ -57,8 +56,8 @@ class Game():
         self.all_sprites.update()
         hits = pygame.sprite.spritecollide(self.player, self.platforms, False)
         if hits:
-            self.player.pos.y = hits[0].rect.top
-            self.player.vel.y = 0
+                self.player.pos.y = hits[0].rect.top
+                self.player.vel.y = 0
         """ПРОКРУТКА ЭКРАНА"""
         # Если игрок доходит до экрана по горизонтали, то экран прокручивается
         if self.player.rect.centerx <= WIDTH // 4:
