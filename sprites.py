@@ -38,6 +38,7 @@ class Player(pygame.sprite.Sprite):
         # Ускорение игрока
         self.ac = vector2(0, 0)
 
+
     def load_images(self):
         """Функция загрузки изображений персонажа"""
         # Изображения когда персонаж стоит
@@ -55,6 +56,10 @@ class Player(pygame.sprite.Sprite):
                                   pygame.image.load('source/Run8.png'),
                                   pygame.image.load('source/Run9.png'),
                                   pygame.image.load('source/Run10.png')]
+        self.fall_frames = [pygame.image.load('source/Right_1.png'),
+                            pygame.image.load('source/Right_2.png'),
+                            pygame.image.load('source/Right_3.png'),
+                            pygame.image.load('source/Right_4.png')]
         # Удаление фона для анимации передвижения вправо
         for frame in self.walk_right_frames:
             frame.set_colorkey(back_gr)
@@ -70,10 +75,13 @@ class Player(pygame.sprite.Sprite):
     def jump(self):
         # Прыгаем только если стоим на поверхности
         self.rect.x += 1
+        fast_hits1 = pygame.sprite.spritecollide(self, self.game.fast_platforms1, False)
+        fast_hits2 = pygame.sprite.spritecollide(self, self.game.fast_platforms2, False)
+        fast_hits3 = pygame.sprite.spritecollide(self, self.game.fast_platforms3, False)
         hits = pygame.sprite.spritecollide(self, self.game.platforms, False)
         hits_main = pygame.sprite.spritecollide(self, self.game.main_platform, False)
         self.rect.x -= 1
-        if hits or hits_main:
+        if hits or hits_main or fast_hits1 or fast_hits2 or fast_hits3:
             self.vel.y = -20
 
     def update(self):
@@ -124,6 +132,7 @@ class Player(pygame.sprite.Sprite):
 
         if not self.walking:
             self.image = self.standing
+
 
 
 class Platform(pygame.sprite.Sprite):

@@ -4,6 +4,7 @@ WIDTH = 1280
 HEIGHT = 720
 FPS = 60
 
+
 """Цвета в RGB"""
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -17,3 +18,4 @@ orange = (255, 162, 0)
 player_ac = 0.8
 player_friction = -0.1
 player_grav = 1.15
+
