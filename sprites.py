@@ -1,4 +1,3 @@
-
 import pygame
 # Импортируем настройки из файла settings.py
 from settings import *
@@ -56,10 +55,6 @@ class Player(pygame.sprite.Sprite):
                                   pygame.image.load('source/Run8.png'),
                                   pygame.image.load('source/Run9.png'),
                                   pygame.image.load('source/Run10.png')]
-        self.fall_frames = [pygame.image.load('source/Right_1.png'),
-                            pygame.image.load('source/Right_2.png'),
-                            pygame.image.load('source/Right_3.png'),
-                            pygame.image.load('source/Right_4.png')]
         # Удаление фона для анимации передвижения вправо
         for frame in self.walk_right_frames:
             frame.set_colorkey(back_gr)
@@ -75,13 +70,11 @@ class Player(pygame.sprite.Sprite):
     def jump(self):
         # Прыгаем только если стоим на поверхности
         self.rect.x += 1
-        fast_hits1 = pygame.sprite.spritecollide(self, self.game.fast_platforms1, False)
-        fast_hits2 = pygame.sprite.spritecollide(self, self.game.fast_platforms2, False)
-        fast_hits3 = pygame.sprite.spritecollide(self, self.game.fast_platforms3, False)
+        fast_hits = pygame.sprite.spritecollide(self, self.game.fast_platforms, False)
         hits = pygame.sprite.spritecollide(self, self.game.platforms, False)
         hits_main = pygame.sprite.spritecollide(self, self.game.main_platform, False)
         self.rect.x -= 1
-        if hits or hits_main or fast_hits1 or fast_hits2 or fast_hits3:
+        if hits or hits_main or fast_hits:
             self.vel.y = -20
 
     def update(self):
@@ -90,19 +83,14 @@ class Player(pygame.sprite.Sprite):
         self.ac = vector2(0, player_grav)
         # Считывание всех нажатых клавиш
         self.keys = pygame.key.get_pressed()
+        self.ac.x = player_ac
 
-        if (self.keys[pygame.K_LEFT] or self.keys[pygame.K_a]) and self.rect.x > 5:
-            self.ac.x = -player_ac
-        if (self.keys[pygame.K_RIGHT] or self.keys[pygame.K_d]) and self.rect.x < 1200:
-            self.ac.x = player_ac
 
         # Учёт силы трения (для того, чтобы игрок не скользил)
         self.ac.x += self.vel.x * player_friction
         # Расчёт передвижения игрока
         self.vel += self.ac
         # Условие для остановки анимации
-        if abs(self.vel.x) < 0.7:
-            self.vel.x = 0
 
         self.pos += self.vel + 0.5 * self.ac
 

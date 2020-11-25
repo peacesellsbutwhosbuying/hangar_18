@@ -28,9 +28,7 @@ class Game():
         self.main_platform = pygame.sprite.Group()
         self.platforms = pygame.sprite.Group()
         self.danger_plat = pygame.sprite.Group()
-        self.fast_platforms1 = pygame.sprite.Group()
-        self.fast_platforms2 = pygame.sprite.Group()
-        self.fast_platforms3 = pygame.sprite.Group()
+        self.fast_platforms = pygame.sprite.Group()
         # Спаун игрока
         self.player = Player(self)
         p_dang = Platform(-2000, 0, 2000, 2000, orange)
@@ -41,13 +39,13 @@ class Game():
         f3 = Platform(3, 3, 1, 1, BLUE)
         # Добавление спрайта игрока в группу спрайтов
         self.all_sprites.add(self.player)
+        self.fast_platforms.add(f1, f2, f3)
+        self.all_sprites.add(f1, f2, f3)
         self.all_sprites.add(p_dang, p_main)
         self.bullets = pygame.sprite.Group()
         # Спаун платформы с перечисление нужных аргументов из списка
-        self.all_sprites.add(f1, f2, f3)
-        self.fast_platforms1.add(f1)
-        self.fast_platforms2.add(f2)
-        self.fast_platforms2.add(f3)
+
+
         self.danger_plat.add(p_dang)
         self.main_platform.add(p_main)
 
@@ -68,9 +66,7 @@ class Game():
 
     def update_screen(self):
         self.all_sprites.update()
-        fast_hits1 = pygame.sprite.spritecollide(self.player, self.fast_platforms1, False)
-        fast_hits2 = pygame.sprite.spritecollide(self.player, self.fast_platforms2, False)
-        fast_hits3 = pygame.sprite.spritecollide(self.player, self.fast_platforms3, False)
+        fast_hits = pygame.sprite.spritecollide(self.player, self.fast_platforms, False)
         hits = pygame.sprite.spritecollide(self.player, self.platforms, False)
         hits_main = pygame.sprite.spritecollide(self.player, self.main_platform, False)
         hits_dang = pygame.sprite.spritecollide(self.player, self.danger_plat, False)
@@ -83,23 +79,8 @@ class Game():
             self.player.vel.y = 0
 
 
-        if fast_hits1:
-            self.player.pos.y = fast_hits1[0].rect.top
-            self.player.vel.y = 0
-            for plat in self.danger_plat:
-                plat.rect.x += 2
-
-        if fast_hits2:
-            self.player.pos.y = fast_hits2[0].rect.top
-            self.player.vel.y = 0
-
-
-        if fast_hits3:
-            self.player.pos.y = fast_hits3[0].rect.top
-            self.player.vel.y = 0
-
-            """for plat in self.danger_plat:
-                plat.rect.x -= 4"""
+        if fast_hits:
+          self.game_over_screen()
 
         if hits_main:
             self.player.pos.y = hits_main[0].rect.top
@@ -110,93 +91,31 @@ class Game():
 
         if self.player.rect.centerx >= 0.5 * WIDTH:
             self.player.pos.x -= abs(self.player.vel.x)
-            for i in range(1000):
-                i += 0.5
-                for plat in self.platforms:
-                    plat.rect.x -= abs(self.player.vel.x) * i
-                    if plat.rect.x <= 0:
-                        plat.kill()
-        """if self.player.rect.centerx < WIDTH//2:
-            self.player.pos.x += abs(self.player.vel.x)
             for plat in self.platforms:
-                plat.rect.x += abs(self.player.vel.x)"""
-
-        if self.player.rect.centery <= HEIGHT//4:
-            self.player.pos.y += abs(self.player.vel.y)
-            for plat in self.platforms:
-                plat.rect.y += abs(self.player.vel.y)
-        if self.player.rect.top >= 0.75 * HEIGHT + 30:
-            self.player.pos.y -= abs(self.player.vel.y)
-            for plat in self.platforms:
-                plat.rect.y -= abs(self.player.vel.y)
-
-        if self.player.vel.x <= 0:
-            for plat in self.main_platform:
-                plat.rect.x += 0.1
-        if self.player.vel.x == 0:
-            for plat in self.danger_plat:
-                plat.rect.x += 1
-
-        if self.player.rect.centerx >= 0.5 * WIDTH:
-            for plat in self.fast_platforms1:
                 plat.rect.x -= abs(self.player.vel.x)
-                if plat.rect.x <= 0:
-                    plat.kill()
+
+        #if self.player.vel.x <= 0:
+        for plat in self.main_platform:
+            plat.rect.x += 0.1
+
+        #if self.player.vel.x <= 0:
+        for plat in self.danger_plat:
+            plat.rect.x += 0
+
         if self.player.rect.centerx >= 0.5 * WIDTH:
-            for plat in self.fast_platforms2:
-                plat.rect.x -= abs(self.player.vel.x)
-                if plat.rect.x <= 0:
-                    plat.kill()
-        if self.player.rect.centerx >= 0.5 * WIDTH:
-            for plat in self.fast_platforms3:
+            for plat in self.fast_platforms:
                 plat.rect.x -= abs(self.player.vel.x)
                 if plat.rect.x <= 0:
                     plat.kill()
 
-        """while len(self.platforms) < 4:
-            width = random.randint(100, 200)
-            p = Platform(random.randrange(WIDTH + 20, WIDTH + 2000),
-                         random.randrange(HEIGHT - 300, HEIGHT - 100),
-                         width,
-                         10,
+        while len(self.fast_platforms) < 1:
+            p = Platform(WIDTH,
+                         HEIGHT - 125,
+                         random.randint(50, 100),
+                         random.randint(100, 250),
                          BLACK)
-            self.platforms.add(p)
-            self.all_sprites.add(p)"""
-
-        """while len(self.fast_platforms) < 2:
-            width = random.randint(100, 200)
-            p = Platform(random.randrange(WIDTH + 20, WIDTH + 1020),
-                         random.randrange(HEIGHT - 300, HEIGHT - 100),
-                         width,
-                         10,
-                         BLUE)
             self.fast_platforms.add(p)
-            self.all_sprites.add(p)"""
-
-        while len(self.fast_platforms1) < 1:
-            p = Platform(random.randint(WIDTH + 100, WIDTH + 100),
-                         HEIGHT - 150,
-                         random.randint(50, 80),
-                         10,
-                         BLUE)
-            self.fast_platforms1.add(p)
             self.all_sprites.add(p)
-        while len(self.fast_platforms2) < 1:
-            p = Platform(random.randint(WIDTH - 200, WIDTH + 280),
-                         HEIGHT - 150,
-                         random.randint(50, 80),
-                         10,
-                         BLUE)
-            self.fast_platforms2.add(p)
-            self.all_sprites.add(p)
-        """while len(self.fast_platforms3) < 1:
-            p = Platform(random.randint(WIDTH + 90, WIDTH + 110),
-                         HEIGHT - 100,
-                         random.randint(100, 200),
-                         10,
-                         BLUE)
-            self.fast_platforms3.add(p)
-            self.all_sprites.add(p)"""
 
     def events(self):
         """ Функция основных событий игры"""
