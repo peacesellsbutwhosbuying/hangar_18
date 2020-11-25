@@ -1,4 +1,3 @@
-
 import pygame
 # Импортируем настройки из файла settings.py
 from settings import *
@@ -30,25 +29,32 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         # Удаляем фон, отсавляя только модель персонажа
         # Указываем начальную позицию персонажа
-        self.rect.center = (WIDTH//2, HEIGHT//2)
+        self.rect.center = (WIDTH//2, HEIGHT//2 + 200)
         # Указываем начальную позицию игрока, но через вектор
-        self.pos = pygame.math.Vector2(WIDTH//2, HEIGHT//2)
+        self.pos = pygame.math.Vector2(WIDTH//2, HEIGHT//2 + 200)
         # Скорость игрока
         self.vel = vector2(0, 0)
         # Ускорение игрока
         self.ac = vector2(0, 0)
 
+
     def load_images(self):
         """Функция загрузки изображений персонажа"""
         # Изображения когда персонаж стоит
-        self.standing = pygame.image.load('Vic_front.png')
+        self.standing = pygame.image.load('source/Vic_front.png')
         # Удаление фона изображения
         self.standing.set_colorkey(back_gr)
         # Изображения, если игрок идёт вправо
-        self.walk_right_frames = [pygame.image.load('Right_1.png'),
-                                 pygame.image.load('Right_2.png'),
-                                 pygame.image.load('Right_3.png'),
-                                 pygame.image.load('Right_4.png')]
+        self.walk_right_frames = [pygame.image.load('source/Run1.png'),
+                                 pygame.image.load('source/Run2.png'),
+                                 pygame.image.load('source/Run3.png'),
+                                 pygame.image.load('source/Run4.png'),
+                                  pygame.image.load('source/Run5.png'),
+                                  pygame.image.load('source/Run6.png'),
+                                  pygame.image.load('source/Run7.png'),
+                                  pygame.image.load('source/Run8.png'),
+                                  pygame.image.load('source/Run9.png'),
+                                  pygame.image.load('source/Run10.png')]
         # Удаление фона для анимации передвижения вправо
         for frame in self.walk_right_frames:
             frame.set_colorkey(back_gr)
@@ -64,9 +70,11 @@ class Player(pygame.sprite.Sprite):
     def jump(self):
         # Прыгаем только если стоим на поверхности
         self.rect.x += 1
+        fast_hits = pygame.sprite.spritecollide(self, self.game.fast_platforms, False)
         hits = pygame.sprite.spritecollide(self, self.game.platforms, False)
+        hits_main = pygame.sprite.spritecollide(self, self.game.main_platform, False)
         self.rect.x -= 1
-        if hits:
+        if hits or hits_main or fast_hits:
             self.vel.y = -20
 
     def update(self):
@@ -75,19 +83,14 @@ class Player(pygame.sprite.Sprite):
         self.ac = vector2(0, player_grav)
         # Считывание всех нажатых клавиш
         self.keys = pygame.key.get_pressed()
+        self.ac.x = player_ac
 
-        if (self.keys[pygame.K_LEFT] or self.keys[pygame.K_a]) and self.rect.x > 5:
-            self.ac.x = -player_ac
-        if (self.keys[pygame.K_RIGHT] or self.keys[pygame.K_d]) and self.rect.x < 1200:
-            self.ac.x = player_ac
 
         # Учёт силы трения (для того, чтобы игрок не скользил)
         self.ac.x += self.vel.x * player_friction
         # Расчёт передвижения игрока
         self.vel += self.ac
         # Условие для остановки анимации
-        if abs(self.vel.x) < 0.5:
-            self.vel.x = 0
 
         self.pos += self.vel + 0.5 * self.ac
 
@@ -104,7 +107,7 @@ class Player(pygame.sprite.Sprite):
             self.walking = False
         # Анимация персонажа
         if self.walking:
-            if now - self.last_update > 200:
+            if now - self.last_update > 60:
                 self.last_update = now
                 self.current_frame = (self.current_frame + 1) % len(self.walk_right_frames)
                 bottom = self.rect.bottom
@@ -119,18 +122,23 @@ class Player(pygame.sprite.Sprite):
             self.image = self.standing
 
 
+
 class Platform(pygame.sprite.Sprite):
     """Объект платформ"""
     # На вход получаются аргументы ( координаты х и у, ширина и высота)
-    def __init__(self, x, y, w, h):
+    def __init__(self, x, y, w, h, color):
         pygame.sprite.Sprite.__init__(self)
         # Загружаем изображение с учётом ширины и высоты
         self.image = pygame.Surface((w, h))
-        self.image.fill(BLACK)
+        self.image.fill(color)
         # Обозначаем область объекта
         self.rect = self.image.get_rect()
+
         self.rect.x = x
         self.rect.y = y
+
+
+
 
 
 class Bullet(pygame.sprite.Sprite):
@@ -156,8 +164,3 @@ class Bullet(pygame.sprite.Sprite):
         self.vel = 8 * self.facing
     def update(self):
         self.rect.x += self.vel
-
-
-
-
-
