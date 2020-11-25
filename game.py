@@ -18,6 +18,8 @@ class Game():
         pygame.display.set_caption(TITLE)
         self.clock = pygame.time.Clock()
         self.running = True
+        self.font_name = pygame.font.match_font(FONT_NAME)
+
     def new_game(self):
         """Функция новой игры"""
         pygame.mixer.music.load('source/bgmusic.wav')
@@ -77,7 +79,7 @@ class Game():
 
 
         if fast_hits:
-          self.game_over_screen()
+            self.game_over_screen()
 
         if hits_main:
             self.player.pos.y = hits_main[0].rect.top
@@ -138,12 +140,43 @@ class Game():
 
     def start_screen(self):
         """Окно запуска игры"""
-        pass
+        self.screen.fill(BLACK)
+        self.draw_text(TITLE, 48, WHITE, WIDTH / 2, HEIGHT / 4)
+        self.draw_text("Arrow UP or W to jump", 22, WHITE, WIDTH / 2, HEIGHT / 2)
+        self.draw_text("Press a key to RUN!", 22, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
+        pygame.display.flip()
+        self.wait_for_key()
 
     def game_over_screen(self):
         """Окно Game Over"""
         self.playing = False
+        if not self.running:
+            return
+        self.screen.fill(BLACK)
+        self.draw_text("GAME OVER", 48, WHITE, WIDTH / 2, HEIGHT / 4)
+        self.draw_text("Arrow UP or W to JUMP DuDe!", 22, WHITE, WIDTH / 2, HEIGHT / 2)
+        self.draw_text("Press a key to RUN AGAIN!", 22, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
+        pygame.display.flip()
+        pygame.mixer.music.pause()
+        self.wait_for_key()
 
+    def wait_for_key(self):
+        waiting = True
+        while waiting:
+            self.clock.tick(FPS)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    waiting = False
+                    self.running = False
+                if event.type == pygame.KEYUP:
+                    waiting = False
+
+    def draw_text(self, text, size, color, x, y):
+        font = pygame.font.Font(self.font_name, size)
+        text_surface = font.render(text, True, color)
+        text_rect = text_surface.get_rect()
+        text_rect.midtop = (x, y)
+        self.screen.blit(text_surface, text_rect)
 
 g = Game()
 g.start_screen()
@@ -151,5 +184,4 @@ g.start_screen()
 while g.running:
 
     g.new_game()
-    g.game_over_screen()
 pygame.quit()
