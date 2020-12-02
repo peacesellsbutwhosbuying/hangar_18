@@ -4,6 +4,7 @@ WIDTH = 1280
 HEIGHT = 720
 FPS = 60
 FONT_NAME = 'impact'
+hs_file = 'highscore.txt'
 
 """Расположение платформ"""
 platform_list = [(0, HEIGHT - 48, 10000, 50),

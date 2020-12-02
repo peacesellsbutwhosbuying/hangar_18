@@ -2,6 +2,7 @@ import pygame
 from settings import *
 from sprites import *
 import random
+from os import path
 # Импортируем значения параметров
 
 
@@ -19,9 +20,20 @@ class Game():
         self.clock = pygame.time.Clock()
         self.running = True
         self.font_name = pygame.font.match_font(FONT_NAME)
+        self.load_data()
+        self.score = 0
+
+    def load_data(self):
+        self.dir = path.dirname(__file__)
+        with open(path.join(self.dir, hs_file), 'w')as f:
+            try:
+                self.highscore = int(f.read())
+            except:
+                self.highscore = 0
 
     def new_game(self):
         """Функция новой игры"""
+        self.score = 0
         pygame.mixer.music.load('source/bgmusic.wav')
         pygame.mixer.music.play(-1)
         # Создаём гурппу спрайтов
@@ -31,18 +43,20 @@ class Game():
         self.platforms = pygame.sprite.Group()
         self.danger_plat = pygame.sprite.Group()
         self.fast_platforms = pygame.sprite.Group()
+        self.mobs = pygame.sprite.Group()
         # Спаун игрока
         self.player = Player(self)
         p_dang = Platform(-2000, 0, 2000, 2000, orange)
         p_main = Platform(-1000, HEIGHT - 48, 10000, 50, BLACK)
-
         f1 = Platform(1, 1, 1, 1, BLUE)
         f2 = Platform(2, 2, 1, 1, BLUE)
         f3 = Platform(3, 3, 1, 1, BLUE)
+        m1 = Mob(700, -1000)
         # Добавление спрайта игрока в группу спрайтов
         self.all_sprites.add(self.player)
         self.fast_platforms.add(f1, f2, f3)
-        self.all_sprites.add(f1, f2, f3)
+        self.all_sprites.add(f1, f2, f3, m1)
+        self.mobs.add(m1)
         self.all_sprites.add(p_dang, p_main)
         self.bullets = pygame.sprite.Group()
         # Спаун платформы с перечисление нужных аргументов из списка
@@ -68,7 +82,15 @@ class Game():
         fast_hits = pygame.sprite.spritecollide(self.player, self.fast_platforms, False)
         hits = pygame.sprite.spritecollide(self.player, self.platforms, False)
         hits_main = pygame.sprite.spritecollide(self.player, self.main_platform, False)
-        hits_dang = pygame.sprite.spritecollide(self.player, self.danger_plat, False)
+        hits_dang = pygame.sprite.spritecollide(self.player, self.mobs, False)
+        for mob in self.mobs:
+            m_gits = pygame.sprite.spritecollide(mob, self.bullets, False)
+            if m_gits:
+                mob.kill()
+                for bullet in self.bullets:
+                    bullet.kill()
+                self.score += 10
+
 
         if hits_dang:
             self.game_over_screen()
@@ -92,6 +114,11 @@ class Game():
             for plat in self.platforms:
                 plat.rect.x -= abs(self.player.vel.x)
 
+            for mob in self.mobs:
+                mob.rect.x -= 10
+                if mob.rect.x <= 0:
+                    mob.kill()
+
         #if self.player.vel.x <= 0:
         for plat in self.main_platform:
             plat.rect.x += 0.1
@@ -105,15 +132,31 @@ class Game():
                 plat.rect.x -= abs(self.player.vel.x)
                 if plat.rect.x <= 0:
                     plat.kill()
+                    self.score += 10
 
         while len(self.fast_platforms) < 1:
             p = Platform(WIDTH,
                          HEIGHT - 125,
-                         random.randint(50, 100),
+                         random.randint(25, 50),
                          random.randint(100, 250),
                          BLACK)
             self.fast_platforms.add(p)
             self.all_sprites.add(p)
+
+        while len(self.fast_platforms) < 2:
+            p = Platform(random.randint(WIDTH + 300, WIDTH + 600),
+                         HEIGHT - 125,
+                         random.randint(25, 50),
+                         random.randint(100, 250),
+                         BLACK)
+            self.fast_platforms.add(p)
+            self.all_sprites.add(p)
+
+        while len(self.mobs) < 1:
+            m = Mob(random.randrange(WIDTH + 100, WIDTH + 200),
+                    random.randrange(HEIGHT - 300, HEIGHT - 200))
+            self.mobs.add(m)
+            self.all_sprites.add(m)
 
     def events(self):
         """ Функция основных событий игры"""
@@ -127,6 +170,7 @@ class Game():
                     self.player.jump()
 
                 if event.key == pygame.K_SPACE:
+                    self.player.atack()
                     self.bullet = Bullet(self.player.rect.centerx, self.player.rect.centery)
                     self.all_sprites.add(self.bullet)
                     self.bullets.add(self.bullet)
@@ -135,6 +179,7 @@ class Game():
         """Функия отрисовки"""
         self.screen.fill(WHITE)
         self.all_sprites.draw(self.screen)
+        self.draw_text(str(self.score), 22, BLACK,  WIDTH - 100, 50)
 
         pygame.display.flip()
 
@@ -144,6 +189,7 @@ class Game():
         self.draw_text(TITLE, 48, WHITE, WIDTH / 2, HEIGHT / 4)
         self.draw_text("Arrow UP or W to jump", 22, WHITE, WIDTH / 2, HEIGHT / 2)
         self.draw_text("Press a key to RUN!", 22, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
+        self.draw_text("High Score: " + str(self.highscore), 22, WHITE, WIDTH//2, 30)
         pygame.display.flip()
         self.wait_for_key()
 
@@ -156,6 +202,15 @@ class Game():
         self.draw_text("GAME OVER", 48, WHITE, WIDTH / 2, HEIGHT / 4)
         self.draw_text("Arrow UP or W to JUMP DuDe!", 22, WHITE, WIDTH / 2, HEIGHT / 2)
         self.draw_text("Press a key to RUN AGAIN!", 22, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
+        self.draw_text("Score: " + str(self.score), 22, WHITE, WIDTH // 2, 55)
+
+        if self.score > self.highscore:
+            self.highscore = self.score
+            self.draw_text("NEW HIGHSCORE!!!", 22, WHITE, WIDTH//2, 30)
+            with open(path.join(self.dir, hs_file), 'w') as f:
+                f.write(str(self.score))
+        else:
+            self.draw_text("High Score: " + str(self.highscore), 22, WHITE, WIDTH // 2, HEIGHT/2 + 30)
         pygame.display.flip()
         pygame.mixer.music.pause()
         self.wait_for_key()

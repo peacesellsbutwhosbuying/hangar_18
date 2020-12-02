@@ -5,9 +5,6 @@ from settings import *
 vector2 = pygame.math.Vector2
 
 
-
-
-
 class Player(pygame.sprite.Sprite):
     """Объект игрока"""
     def __init__(self,game):
@@ -37,7 +34,6 @@ class Player(pygame.sprite.Sprite):
         # Ускорение игрока
         self.ac = vector2(0, 0)
 
-
     def load_images(self):
         """Функция загрузки изображений персонажа"""
         # Изображения когда персонаж стоит
@@ -55,8 +51,13 @@ class Player(pygame.sprite.Sprite):
                                   pygame.image.load('source/Run8.png'),
                                   pygame.image.load('source/Run9.png'),
                                   pygame.image.load('source/Run10.png')]
+        self.atack_frames =[pygame.image.load('source/Shoot_1.png'),
+                            pygame.image.load('source/Shoot_2.png'),
+                            pygame.image.load('source/Shoot_3.png')]
         # Удаление фона для анимации передвижения вправо
         for frame in self.walk_right_frames:
+            frame.set_colorkey(back_gr)
+        for frame in self.atack_frames:
             frame.set_colorkey(back_gr)
         """Переворот изображений для анимации движения влево"""
         # Создаём пустой массив
@@ -100,7 +101,6 @@ class Player(pygame.sprite.Sprite):
         """Функция анимации игрока"""
         # Время игры
         now = pygame.time.get_ticks()
-
         if self.vel.x != 0:
             self.walking = True
         else:
@@ -120,7 +120,17 @@ class Player(pygame.sprite.Sprite):
 
         if not self.walking:
             self.image = self.standing
+            if now - self.last_update > 60:
+                self.last_update = now
+                self.current_frame = (self.current_frame + 1) % len(self.atack_frames)
+                self.image = self.atack_frames[self.current_frame]
 
+    def atack(self):
+        now = pygame.time.get_ticks()
+        if now - self.last_update > 1:
+            self.last_update = now
+            self.current_frame = (self.current_frame +1 ) % len(self.atack_frames)
+            self.image = self.atack_frames[self.current_frame]
 
 
 class Platform(pygame.sprite.Sprite):
@@ -133,20 +143,16 @@ class Platform(pygame.sprite.Sprite):
         self.image.fill(color)
         # Обозначаем область объекта
         self.rect = self.image.get_rect()
-
         self.rect.x = x
         self.rect.y = y
-
-
-
 
 
 class Bullet(pygame.sprite.Sprite):
 
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((20, 5))
-        self.image.fill(GREEN)
+        self.image = pygame.image.load('source/Crystal.png')
+        self.image.set_colorkey(back_gr)
         self.rect = self.image.get_rect()
         self.rect.bottom = y
         self.rect.centerx = x
@@ -162,5 +168,15 @@ class Bullet(pygame.sprite.Sprite):
         if self.keys[pygame.K_LEFT]:
             self.facing = -1
         self.vel = 8 * self.facing
+
     def update(self):
         self.rect.x += self.vel
+
+
+class Mob(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((75, 100))
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
