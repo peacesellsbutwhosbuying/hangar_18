@@ -1,6 +1,6 @@
 """Основные настройки игры"""
 TITLE = "Hangar 18"
-WIDTH = 1280
+WIDTH = 1080
 HEIGHT = 720
 FPS = 60
 FONT_NAME = 'impact'

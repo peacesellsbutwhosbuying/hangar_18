@@ -47,10 +47,10 @@ class Game():
         # Спаун игрока
         self.player = Player(self)
         p_dang = Platform(-2000, 0, 2000, 2000, orange)
-        p_main = Platform(-1000, HEIGHT - 48, 10000, 50, BLACK)
-        f1 = Platform(1, 1, 1, 1, BLUE)
-        f2 = Platform(2, 2, 1, 1, BLUE)
-        f3 = Platform(3, 3, 1, 1, BLUE)
+        p_main = MPlatform(-1000, HEIGHT - 48, 10000, 50, (99, 113, 132))
+        f1 = Platform(1, 1, 1, 1, (99, 113, 132))
+        f2 = Platform(2, 2, 1, 1, (99, 113, 132))
+        f3 = Platform(3, 3, 1, 1, (99, 113, 132))
         m1 = Mob(700, -1000)
         # Добавление спрайта игрока в группу спрайтов
         self.all_sprites.add(self.player)
@@ -59,7 +59,6 @@ class Game():
         self.mobs.add(m1)
         self.all_sprites.add(p_dang, p_main)
         self.bullets = pygame.sprite.Group()
-        # Спаун платформы с перечисление нужных аргументов из списка
         self.danger_plat.add(p_dang)
         self.main_platform.add(p_main)
         # Запускаем функию run() для группирования игры
@@ -91,14 +90,12 @@ class Game():
                     bullet.kill()
                 self.score += 10
 
-
         if hits_dang:
             self.game_over_screen()
 
         if hits:
             self.player.pos.y = hits[0].rect.top
             self.player.vel.y = 0
-
 
         if fast_hits:
             self.game_over_screen()
@@ -139,7 +136,7 @@ class Game():
                          HEIGHT - 125,
                          random.randint(25, 50),
                          random.randint(100, 250),
-                         BLACK)
+                         (99, 113, 132))
             self.fast_platforms.add(p)
             self.all_sprites.add(p)
 
@@ -148,7 +145,7 @@ class Game():
                          HEIGHT - 125,
                          random.randint(25, 50),
                          random.randint(100, 250),
-                         BLACK)
+                         (99, 113, 132))
             self.fast_platforms.add(p)
             self.all_sprites.add(p)
 
@@ -177,7 +174,7 @@ class Game():
 
     def draw (self):
         """Функия отрисовки"""
-        self.screen.fill(WHITE)
+        self.screen.blit(pygame.image.load('source/back_front.png'), (0, 0))
         self.all_sprites.draw(self.screen)
         self.draw_text(str(self.score), 22, BLACK,  WIDTH - 100, 50)
 
