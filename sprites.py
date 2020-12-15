@@ -206,18 +206,10 @@ class Bullet(pygame.sprite.Sprite):
 
 
 class Mob(pygame.sprite.Sprite):
+
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        """Функция загрузки изображений персонажа"""
-
-        # Изображения, если игрок идёт вправо
-        self.frames = [pygame.image.load('source/ets1.png'),
-                       pygame.image.load('source/ets2.png'),
-                       pygame.image.load('source/ets3.png'),
-                       pygame.image.load('source/ets4.png'),
-                       pygame.image.load('source/ets5.png'),
-                       pygame.image.load('source/ets6.png'),
-                       pygame.image.load('source/ets7.png')]
+        self.frames = [pygame.image.load('source/ets1.png')]
         self.frames1 = []
         # Заполняем массив развёрнутыми изображениями
         for frame in self.frames:
@@ -228,11 +220,4 @@ class Mob(pygame.sprite.Sprite):
         self.image = self.frames1[self.current_frame]
         self.rect = self.image.get_rect()
         self.rect.topleft = [x, y]
-        self.animate()
 
-    def animate(self):
-        """Функция анимации врага"""
-        self.current_frame += 1
-        if self.current_frame >= len(self.frames1):
-            self.current_frame = 0
-        self.image = self.frames1[self.current_frame]

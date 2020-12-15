@@ -1,20 +1,18 @@
+# Импортируем значения параметров
 import pygame
 from settings import *
 from sprites import *
 import random
 from os import path
-# Импортируем значения параметров
 
 
 class Game():
-
     """Объект игры"""
-
     def __init__(self):
         """Функция основынх настроек игры"""
         pygame.init()
         pygame.mixer.init()
-
+        pygame.display.set_icon(pygame.image.load('source/icon.jpg'))
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption(TITLE)
         self.clock = pygame.time.Clock()
@@ -41,7 +39,7 @@ class Game():
         self.all_sprites = pygame.sprite.Group()
         self.pl = pygame.sprite.Group()
         self.pl.add(self.player)
-        # Создаём отдельную группу спрайтов для платформ
+        # Создание группы спрайтов
         self.main_platform = pygame.sprite.Group()
         self.platforms = pygame.sprite.Group()
         self.danger_plat = pygame.sprite.Group()
@@ -49,7 +47,7 @@ class Game():
         self.mobs = pygame.sprite.Group()
         self.vents = pygame.sprite.Group()
         self.doors = pygame.sprite.Group()
-        # Спаун игрока
+
         p_dang = Platform(-2000, 0, 2000, 2000, orange)
         p_main = MPlatform(-1000, HEIGHT - 48, 10000, 50, (99, 113, 132))
         f1 = Platform(1, 1, 1, 1, (99, 113, 132))
@@ -57,7 +55,7 @@ class Game():
         f3 = Platform(3, 3, 1, 1, (99, 113, 132))
         m1 = Mob(700, -1000)
         v1 = Vent(1, 1)
-        # Добавление спрайта игрока в группу спрайтов
+        # Добавление спрайтов в группы
         self.fast_platforms.add(f1, f2, f3)
         self.all_sprites.add(f1, f2, f3, m1)
         self.mobs.add(m1)
@@ -66,7 +64,6 @@ class Game():
         self.danger_plat.add(p_dang)
         self.main_platform.add(p_main)
         self.vents.add(v1)
-
         # Запускаем функию run() для группирования игры
         self.run_game()
 
@@ -97,15 +94,15 @@ class Game():
                     bullet.kill()
                 self.score += 10
 
-        #if hits_dang:
-            #self.game_over_screen()
+        if hits_dang:
+            self.game_over_screen()
 
         if hits:
             self.player.pos.y = hits[0].rect.top
             self.player.vel.y = 0
 
-        #if fast_hits:
-            #self.game_over_screen()
+        if fast_hits:
+            self.game_over_screen()
 
         if hits_main:
             self.player.pos.y = hits_main[0].rect.top

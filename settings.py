@@ -6,6 +6,7 @@ FPS = 60
 FONT_NAME = 'impact'
 hs_file = 'highscore.txt'
 
+
 """Расположение платформ"""
 platform_list = [(0, HEIGHT - 48, 10000, 50),
                  (WIDTH//2, HEIGHT//2 + 100, 50, 10),
