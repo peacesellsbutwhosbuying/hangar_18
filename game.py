@@ -37,30 +37,36 @@ class Game():
         pygame.mixer.music.load('source/bgmusic.wav')
         pygame.mixer.music.play(-1)
         # Создаём гурппу спрайтов
+        self.player = Player(self)
         self.all_sprites = pygame.sprite.Group()
+        self.pl = pygame.sprite.Group()
+        self.pl.add(self.player)
         # Создаём отдельную группу спрайтов для платформ
         self.main_platform = pygame.sprite.Group()
         self.platforms = pygame.sprite.Group()
         self.danger_plat = pygame.sprite.Group()
         self.fast_platforms = pygame.sprite.Group()
         self.mobs = pygame.sprite.Group()
+        self.vents = pygame.sprite.Group()
+        self.doors = pygame.sprite.Group()
         # Спаун игрока
-        self.player = Player(self)
         p_dang = Platform(-2000, 0, 2000, 2000, orange)
         p_main = MPlatform(-1000, HEIGHT - 48, 10000, 50, (99, 113, 132))
         f1 = Platform(1, 1, 1, 1, (99, 113, 132))
         f2 = Platform(2, 2, 1, 1, (99, 113, 132))
         f3 = Platform(3, 3, 1, 1, (99, 113, 132))
         m1 = Mob(700, -1000)
+        v1 = Vent(1, 1)
         # Добавление спрайта игрока в группу спрайтов
-        self.all_sprites.add(self.player)
         self.fast_platforms.add(f1, f2, f3)
         self.all_sprites.add(f1, f2, f3, m1)
         self.mobs.add(m1)
-        self.all_sprites.add(p_dang, p_main)
+        self.all_sprites.add(p_dang, p_main, v1)
         self.bullets = pygame.sprite.Group()
         self.danger_plat.add(p_dang)
         self.main_platform.add(p_main)
+        self.vents.add(v1)
+
         # Запускаем функию run() для группирования игры
         self.run_game()
 
@@ -78,6 +84,7 @@ class Game():
 
     def update_screen(self):
         self.all_sprites.update()
+        self.pl.update()
         fast_hits = pygame.sprite.spritecollide(self.player, self.fast_platforms, False)
         hits = pygame.sprite.spritecollide(self.player, self.platforms, False)
         hits_main = pygame.sprite.spritecollide(self.player, self.main_platform, False)
@@ -90,15 +97,15 @@ class Game():
                     bullet.kill()
                 self.score += 10
 
-        if hits_dang:
-            self.game_over_screen()
+        #if hits_dang:
+            #self.game_over_screen()
 
         if hits:
             self.player.pos.y = hits[0].rect.top
             self.player.vel.y = 0
 
-        if fast_hits:
-            self.game_over_screen()
+        #if fast_hits:
+            #self.game_over_screen()
 
         if hits_main:
             self.player.pos.y = hits_main[0].rect.top
@@ -130,6 +137,14 @@ class Game():
                 if plat.rect.x <= 0:
                     plat.kill()
                     self.score += 10
+            for vent in self.vents:
+                vent.rect.x -= abs(self.player.vel.x)
+                if vent.rect.x < 0:
+                    vent.kill()
+            for d in self.doors:
+                d.rect.x -= abs(self.player.vel.x)
+                if d.rect.x < 0:
+                   d.kill()
 
         while len(self.fast_platforms) < 1:
             p = Platform(WIDTH,
@@ -155,6 +170,15 @@ class Game():
             self.mobs.add(m)
             self.all_sprites.add(m)
 
+        while len(self.vents) < 1:
+            v = Vent(random.randint(WIDTH + 1000, WIDTH + 5000), random.randint(10, 200))
+            self.vents.add(v)
+            self.all_sprites.add(v)
+        while len(self.doors) < 1:
+            d = Door(random.randint(WIDTH + 1000, WIDTH + 5000), 476)
+            self.doors.add(d)
+            self.all_sprites.add(d)
+
     def events(self):
         """ Функция основных событий игры"""
         for event in pygame.event.get():
@@ -176,7 +200,9 @@ class Game():
         """Функия отрисовки"""
         self.screen.blit(pygame.image.load('source/back_front.png'), (0, 0))
         self.all_sprites.draw(self.screen)
+        self.pl.draw(self.screen)
         self.draw_text(str(self.score), 22, BLACK,  WIDTH - 100, 50)
+
 
         pygame.display.flip()
 
@@ -184,7 +210,7 @@ class Game():
         """Окно запуска игры"""
         self.screen.fill(BLACK)
         self.draw_text(TITLE, 48, WHITE, WIDTH / 2, HEIGHT / 4)
-        self.draw_text("Arrow UP or W to jump", 22, WHITE, WIDTH / 2, HEIGHT / 2)
+        self.draw_text("UP or W to jump\n SPACE to attack", 22, WHITE, WIDTH / 2, HEIGHT / 2)
         self.draw_text("Press a key to RUN!", 22, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
         self.draw_text("High Score: " + str(self.highscore), 22, WHITE, WIDTH//2, 30)
         pygame.display.flip()
