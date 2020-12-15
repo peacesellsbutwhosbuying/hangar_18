@@ -128,7 +128,7 @@ class Player(pygame.sprite.Sprite):
         now = pygame.time.get_ticks()
         if now - self.last_update > 1:
             self.last_update = now
-            self.current_frame = (self.current_frame +1 ) % len(self.atack_frames)
+            self.current_frame = (self.current_frame +1) % len(self.atack_frames)
             self.image = self.atack_frames[self.current_frame]
 
 
@@ -160,6 +160,25 @@ class MPlatform(pygame.sprite.Sprite):
         self.rect.y = y
 
 
+class Vent(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load('source/vent.jpg')
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+
+
+class Door(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load('source/door.jpg')
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+
+
+
 class Bullet(pygame.sprite.Sprite):
 
     def __init__(self, x, y):
@@ -187,37 +206,18 @@ class Bullet(pygame.sprite.Sprite):
 
 
 class Mob(pygame.sprite.Sprite):
+
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.load_images()
-        self.current_frame = 0
-        self.last_update = 0
-        self.animate()
-        self.rect.x = x
-        self.rect.y = y
-
-
-    def load_images(self):
-        """Функция загрузки изображений персонажа"""
-
-        # Изображения, если игрок идёт вправо
-        self.frames = [pygame.image.load('source/ets1.png'),
-                       pygame.image.load('source/ets2.png'),
-                       pygame.image.load('source/ets3.png'),
-                       pygame.image.load('source/ets4.png'),
-                       pygame.image.load('source/ets5.png'),
-                       pygame.image.load('source/ets6.png'),
-                       pygame.image.load('source/ets7.png')]
+        self.frames = [pygame.image.load('source/ets1.png')]
         self.frames1 = []
         # Заполняем массив развёрнутыми изображениями
         for frame in self.frames:
             self.frames1.append(pygame.transform.flip(frame, True, False))
         for frame in self.frames1:
             frame.set_colorkey(back_gr)
-
-    def animate(self):
-        """Функция анимации врага"""
-        # Время игры
-        self.current_frame = (self.current_frame + 1) % len(self.frames1)
+        self.current_frame = 0
         self.image = self.frames1[self.current_frame]
         self.rect = self.image.get_rect()
+        self.rect.topleft = [x, y]
+
