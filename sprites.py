@@ -135,11 +135,13 @@ class Player(pygame.sprite.Sprite):
 class Platform(pygame.sprite.Sprite):
     """Объект платформ"""
     # На вход получаются аргументы ( координаты х и у, ширина и высота)
-    def __init__(self, x, y, w, h, color):
+    def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         # Загружаем изображение с учётом ширины и высоты
-        self.image = pygame.Surface((w, h))
-        self.image.fill(color)
+        #self.image = pygame.Surface((w, h))
+        #self.image.fill(color)
+        self.image = pygame.image.load('source/agg3.png')
+        self.image.set_colorkey(back_gr)
         # Обозначаем область объекта
         self.rect = self.image.get_rect()
         self.rect.x = x

@@ -48,11 +48,11 @@ class Game():
         self.vents = pygame.sprite.Group()
         self.doors = pygame.sprite.Group()
 
-        p_dang = Platform(-2000, 0, 2000, 2000, orange)
-        p_main = MPlatform(-1000, HEIGHT - 48, 10000, 50, (99, 113, 132))
-        f1 = Platform(1, 1, 1, 1, (99, 113, 132))
-        f2 = Platform(2, 2, 1, 1, (99, 113, 132))
-        f3 = Platform(3, 3, 1, 1, (99, 113, 132))
+        p_dang = Platform(-2000, 0)
+        p_main = MPlatform(-1000, HEIGHT - 48, 10000, 50, (231, 243, 247 ))
+        f1 = Platform(1, 1)
+        f2 = Platform(2, 2)
+        f3 = Platform(3, 3)
         m1 = Mob(700, -1000)
         v1 = Vent(1, 1)
         # Добавление спрайтов в группы
@@ -145,19 +145,13 @@ class Game():
 
         while len(self.fast_platforms) < 1:
             p = Platform(WIDTH,
-                         HEIGHT - 125,
-                         random.randint(25, 50),
-                         random.randint(100, 250),
-                         (99, 113, 132))
+                         HEIGHT - 125)
             self.fast_platforms.add(p)
             self.all_sprites.add(p)
 
         while len(self.fast_platforms) < 2:
             p = Platform(random.randint(WIDTH + 300, WIDTH + 600),
-                         HEIGHT - 125,
-                         random.randint(25, 50),
-                         random.randint(100, 250),
-                         (99, 113, 132))
+                         HEIGHT - 125)
             self.fast_platforms.add(p)
             self.all_sprites.add(p)
 
