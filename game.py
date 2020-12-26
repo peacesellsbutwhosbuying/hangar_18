@@ -194,7 +194,6 @@ class Game():
         self.pl.draw(self.screen)
         self.draw_text(str(self.score), 22, BLACK,  WIDTH - 100, 50)
 
-
         pygame.display.flip()
 
     def start_screen(self):
